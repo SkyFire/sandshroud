@@ -186,7 +186,7 @@ void WorldSession::HandleGuildPromote(WorldPacket & recv_data)
 	}
 
 	PlayerInfo * dstplr = objmgr.GetPlayerInfoByName(name.c_str());
-	if( dstplr== NULL )
+	if( dstplr == NULL )
 		return;
 
 	_player->m_playerInfo->guild->PromoteGuildMember(dstplr, this);
@@ -294,7 +294,7 @@ void WorldSession::HandleGuildLeader(WorldPacket & recv_data)
 
 void WorldSession::HandleGuildMotd(WorldPacket & recv_data)
 {
-	std::string motd;
+	std::string motd = "";
 	if(recv_data.size())
 		recv_data >> motd;
 
@@ -355,8 +355,13 @@ void WorldSession::HandleGuildRank(WorldPacket & recv_data)
 		recv_data >> pRank->iTabPermissions[i].iStacksPerDay;
 	}
 
-	CharacterDatabase.Execute("REPLACE INTO guild_ranks VALUES(%u, %u, \"%s\", %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)",
-		_player->m_playerInfo->guild->GetGuildId(), pRank->iId, CharacterDatabase.EscapeString(newName).c_str(),
+	uint32 guildID = _player->m_playerInfo->guild->GetGuildId();
+	uint32 rankID = pRank->iId;
+
+	CharacterDatabase.Execute("DELETE FROM guild_ranks WHERE guildid = %u AND rankid = %u;", guildID, rankID);
+
+	CharacterDatabase.Execute("INSERT INTO guild_ranks VALUES(%u, %u, \'%s\', %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)",
+		guildID, rankID, CharacterDatabase.EscapeString(newName).c_str(),
 		pRank->iRights, pRank->iGoldLimitPerDay,
 		pRank->iTabPermissions[0].iFlags, pRank->iTabPermissions[0].iStacksPerDay,
 		pRank->iTabPermissions[1].iFlags, pRank->iTabPermissions[1].iStacksPerDay,
@@ -364,6 +369,8 @@ void WorldSession::HandleGuildRank(WorldPacket & recv_data)
 		pRank->iTabPermissions[3].iFlags, pRank->iTabPermissions[3].iStacksPerDay,
 		pRank->iTabPermissions[4].iFlags, pRank->iTabPermissions[4].iStacksPerDay,
 		pRank->iTabPermissions[5].iFlags, pRank->iTabPermissions[5].iStacksPerDay);
+
+	_player->m_playerInfo->guild->SendGuildRoster(this);
 }
 
 void WorldSession::HandleGuildAddRank(WorldPacket & recv_data)
@@ -449,6 +456,8 @@ void WorldSession::HandleGuildSetOfficerNote(WorldPacket & recv_data)
 
 void WorldSession::HandleSaveGuildEmblem(WorldPacket & recv_data)
 {
+	CHECK_INWORLD_RETURN
+
 	uint64 guid;
 	Guild * pGuild = _player->GetGuild();
 	int32 cost = MONEY_ONE_GOLD * 10;
@@ -497,23 +506,25 @@ void WorldSession::HandleCharterBuy(WorldPacket & recv_data)
 {
 	uint8 error;
 	uint64 creature_guid;
-	uint64 crap;
-	uint32 crap2;
-	string name;
-	uint64 crap3, crap4, crap5, crap6, crap7, crap8;
-	uint32 crap9;
-	uint8 crap10;
-	uint32 arena_index;
+	uint32 crap;
+	uint64 crap2;
+	string name, unkstr;
+	uint32 Data[7];
+	uint16 crap10;
 	uint32 crap11;
+	uint32 crap12, PetitionSignerCount;
+	string crap13;
+	uint32 arena_index;
 
 	recv_data >> creature_guid;
 	recv_data >> crap >> crap2;
-	recv_data >> name;
-	recv_data >> crap3 >> crap4 >> crap5 >> crap6 >> crap7 >> crap8;
-	recv_data >> crap9;
+	recv_data >> name >> unkstr;
+	recv_data >> Data[0] >> Data[1] >> Data[2] >> Data[3] >> Data[4] >> Data[5] >> Data[6];
 	recv_data >> crap10;
+	recv_data >> crap11 >> crap12 >> PetitionSignerCount;
+	for(uint32 s = 0; s < 10; ++s)
+		recv_data >> crap13;
 	recv_data >> arena_index;
-	recv_data >> crap11;
 
 	Creature* crt = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(creature_guid));
 	if(!crt)
@@ -724,19 +735,6 @@ void WorldSession::HandleCharterShowSignatures(WorldPacket & recv_data)
 
 void WorldSession::HandleCharterQuery(WorldPacket & recv_data)
 {
-	/*
-	->outdated!
-	{SERVER} Packet: (0x01C7) SMSG_PETITION_QUERY_RESPONSE PacketSize = 77
-	|------------------------------------------------|----------------|
-	|00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F |0123456789ABCDEF|
-	|------------------------------------------------|----------------|
-	|20 08 00 00 28 32 01 00 00 00 00 00 53 74 6F 72 | ...(2......Stor|
-	|6D 62 72 69 6E 67 65 72 73 00 00 09 00 00 00 09 |mbringers.......|
-	|00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |................|
-	|00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |................|
-	|00 00 00 00 00 00 00 00 00 00 00 00 00		  |.............   |
-	-------------------------------------------------------------------
-	*/
 	uint32 charter_id;
 	uint64 item_guid;
 	recv_data >> charter_id;
@@ -766,16 +764,13 @@ void WorldSession::HandleCharterQuery(WorldPacket & recv_data)
 	data << uint32(0);										// 8
 	data << uint16(0);										// 9 2 bytes field
 
+	uint32 maxlevel = sWorld.GetMaxLevel(_player);
+	if(maxlevel < 80)
+		maxlevel = 80;
 	if( c->CharterType == CHARTER_TYPE_GUILD )
-	{
-		data << uint32(1);									// 10 minlevel
-		data << uint32(80);									// 11 maxlevel (To Funservers:Players above level 80 can't sign charters!)
-	}
+		data << uint32(1) << uint32(maxlevel);				// 10 minlevel
 	else
-	{
-		data << uint32(1);									// 10
-		data << uint32(80);									// 11
-	}
+		data << uint32(80) << uint32(maxlevel);				// 10
 
 	data << uint32(0);										// 12
 	data << uint32(0);										// 13 count of next strings?
@@ -784,13 +779,9 @@ void WorldSession::HandleCharterQuery(WorldPacket & recv_data)
 	data << uint16(0);										// 16
 
 	if (c->CharterType == CHARTER_TYPE_GUILD)
-	{
 		data << uint32(0);
-	}
 	else
-	{
 		data << uint32(1);
-	}
 
 	SendPacket(&data);
 }
